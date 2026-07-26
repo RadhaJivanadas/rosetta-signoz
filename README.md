@@ -2,6 +2,9 @@
 
 **Track 01 — AI & Agent Observability** · *Agents of SigNoz* hackathon
 
+[Read the build article](https://radhajivanadas.github.io/rosetta-signoz/) ·
+[Watch the 3-minute submission video](https://github.com/RadhaJivanadas/rosetta-signoz/releases/download/v1.0.0/rosetta-submission.mp4)
+
 > Four agent services. Four instrumentation libraries. Zero shared attribute
 > names. Ask *"what did my agents cost this hour"* and no single query can
 > answer it.
