@@ -21,16 +21,12 @@ circuit breaker, and an MCP investigator.
 
 The live demo shows:
 
-1. Langfuse token counts trapped in a JSON string.
-2. A seeded four-framework fleet producing canonical cost and token usage.
-3. One SigNoz dashboard query across every service.
-4. Credentials redacted before storage.
-5. Alerts firing on normalised findings.
-6. A circuit breaker stopping a repeated-tool loop.
-7. A SigNoz MCP investigator producing an actionable incident verdict.
+1. Logging in to the live self-hosted SigNoz instance.
+2. Four services instrumented by four different frameworks.
+3. A current numeric OpenTelemetry token field.
+4. Langfuse token counts trapped in a JSON string.
+5. The Rosetta processor running the seeded fleet.
+6. One SigNoz dashboard query covering every service on one chart.
 
-## Close
-
-The GenAI conventions are still changing. Rosetta performs the translation in
-the OpenTelemetry pipeline, so the telemetry remains vendor-neutral and the
-same controls work across the whole agent fleet.
+The demo portion is the uninterrupted first `2:18.55` of the longer source
+recording, ending after the word “chart.”
