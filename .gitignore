@@ -1,0 +1,31 @@
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Scratch space and research checkouts — not part of the submission
+.scratch/
+.tmp_sz/
+
+# Foundry generates these from casting.yaml; casting.yaml and casting.yaml.lock
+# ARE committed (the rules require them), the rendered output is not.
+infra/pours/
+infra/foundry_windows_amd64/
+infra/foundry*.tar.gz
+
+# Secrets
+infra/api_key.txt
+.env
+
+# Contains an API key — must never reach a public repo
+prompt.txt
+video/.work/
+
+# Local conversation context and rendered media. The submission video is
+# published separately; source control keeps only its script.
+history.txt
+video/*.mp4
+video/rosetta.srt
+video/script.md
+video/script-tts.md

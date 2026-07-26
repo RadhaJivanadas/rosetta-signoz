@@ -1,0 +1,132 @@
+# Rosetta model pricing table
+#
+# The OpenTelemetry GenAI semantic conventions define NO cost attribute. Every
+# vendor that shows you dollars (Langfuse, LangSmith, Phoenix, Helicone) computes
+# them server-side from a table like this one and does not put the result in the
+# spans it exports. Send those spans to a neutral OTLP backend and the money
+# disappears. This file is how Rosetta puts it back.
+#
+# ---------------------------------------------------------------------------
+# READ THIS BEFORE TRUSTING A NUMBER
+#
+# These rates are INDICATIVE, captured for the hackathon demo. They are not a
+# billing source of truth and are certainly stale by the time you read this:
+# list prices change, negotiated rates differ per account, and providers meter
+# some things (batch, priority tiers, long-context surcharges) that a flat
+# per-token table cannot express.
+#
+# Treat Rosetta's cost output as a directional signal for *detecting anomalies*
+# -- a run that costs 40x its neighbours -- not for invoicing. Point
+# `ROSETTA_PRICING_FILE` at your own table with your real negotiated rates
+# before using it for anything financial.
+#
+# `rosetta.cost.source` on each span records how a figure was derived, so a
+# passthrough vendor cost is always distinguishable from one Rosetta computed.
+# ---------------------------------------------------------------------------
+
+version: "2026-07-26-demo"
+currency: USD
+# All rates are USD per 1,000,000 tokens.
+unit: per_1m_tokens
+
+defaults:
+  # Applied when a model matches nothing below. Deliberately zero so unpriced
+  # models surface as R012/unpriced rather than silently inventing a number.
+  input: 0.0
+  output: 0.0
+
+models:
+  # -- OpenAI -------------------------------------------------------------
+  gpt-4o:
+    input: 2.50
+    output: 10.00
+    cache_read: 1.25
+  gpt-4o-mini:
+    input: 0.15
+    output: 0.60
+    cache_read: 0.075
+  gpt-4.1:
+    input: 2.00
+    output: 8.00
+    cache_read: 0.50
+  gpt-4.1-mini:
+    input: 0.40
+    output: 1.60
+    cache_read: 0.10
+  o3:
+    input: 2.00
+    output: 8.00
+    cache_read: 0.50
+    # Reasoning tokens are billed as output tokens.
+    reasoning_as: output
+  o4-mini:
+    input: 1.10
+    output: 4.40
+    cache_read: 0.275
+    reasoning_as: output
+
+  # -- Anthropic ----------------------------------------------------------
+  # Cache writes cost MORE than base input (a 5m TTL write is ~1.25x), while
+  # reads cost far less. A table that ignores the write premium under-reports
+  # heavy-caching agents, which is exactly the workload that caches.
+  claude-opus-4:
+    input: 15.00
+    output: 75.00
+    cache_read: 1.50
+    cache_write: 18.75
+  claude-sonnet-4:
+    input: 3.00
+    output: 15.00
+    cache_read: 0.30
+    cache_write: 3.75
+  claude-haiku-3-5:
+    input: 0.80
+    output: 4.00
+    cache_read: 0.08
+    cache_write: 1.00
+
+  # -- Google -------------------------------------------------------------
+  gemini-2.5-pro:
+    input: 1.25
+    output: 10.00
+    cache_read: 0.31
+  gemini-2.0-flash:
+    input: 0.10
+    output: 0.40
+    cache_read: 0.025
+
+  # -- Self-hosted --------------------------------------------------------
+  # Marginal per-token price is zero; the real cost is GPU time. Rosetta prices
+  # these at zero and marks them, so "free" inference does not masquerade as
+  # untracked spend.
+  llama-3.3-70b:
+    input: 0.0
+    output: 0.0
+    self_hosted: true
+  qwen-2.5-72b:
+    input: 0.0
+    output: 0.0
+    self_hosted: true
+
+# Prefix aliases. Providers append dated/versioned suffixes
+# (gpt-4o-2024-11-20, claude-sonnet-4-20250514, models/gemini-2.5-pro) and a
+# table keyed on exact strings silently stops matching the day a model rolls.
+# Longest prefix wins.
+aliases:
+  gpt-4o-mini: gpt-4o-mini
+  gpt-4o: gpt-4o
+  gpt-4.1-mini: gpt-4.1-mini
+  gpt-4.1: gpt-4.1
+  o4-mini: o4-mini
+  o3-mini: o4-mini
+  o3: o3
+  claude-3-5-haiku: claude-haiku-3-5
+  claude-haiku-3-5: claude-haiku-3-5
+  claude-opus-4: claude-opus-4
+  claude-4-opus: claude-opus-4
+  claude-sonnet-4: claude-sonnet-4
+  claude-4-sonnet: claude-sonnet-4
+  gemini-2.5-pro: gemini-2.5-pro
+  gemini-2.0-flash: gemini-2.0-flash
+  llama-3.3-70b: llama-3.3-70b
+  qwen-2.5-72b: qwen-2.5-72b
