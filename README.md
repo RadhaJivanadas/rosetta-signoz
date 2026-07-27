@@ -2,6 +2,14 @@
 
 **Track 01, AI & Agent Observability** · *Agents of SigNoz* hackathon
 
+<p align="center">
+  <a href="https://signoz.io/"><img src="https://img.shields.io/badge/SigNoz-0.134.0-f97316?style=flat-square" alt="SigNoz 0.134.0"></a>
+  <a href="https://opentelemetry.io/"><img src="https://img.shields.io/badge/OpenTelemetry-1.44-425cc7?style=flat-square&logo=opentelemetry&logoColor=white" alt="OpenTelemetry 1.44"></a>
+  <img src="https://img.shields.io/badge/signals-traces%20%7C%20metrics%20%7C%20logs-0ea5e9?style=flat-square" alt="Traces, metrics and logs">
+  <a href="#depth-of-signoz-usage"><img src="https://img.shields.io/badge/MCP-enabled-16a34a?style=flat-square" alt="MCP enabled"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-111?style=flat-square" alt="MIT license"></a>
+</p>
+
 **3-minute demo:** https://www.youtube.com/watch?v=dxnXySWuQQM &nbsp;·&nbsp; **Full demo:** https://www.youtube.com/watch?v=qD3ea8ewY64 &nbsp;·&nbsp; **Build article:** https://radhajivanadas.github.io/rosetta-signoz/
 
 > Four agent services. Four instrumentation libraries. Zero shared attribute
