@@ -20,12 +20,8 @@ infra/api_key.txt
 
 # Contains an API key — must never reach a public repo
 prompt.txt
-video/.work/
 
-# Local conversation context and rendered media. The submission video is
-# published separately; source control keeps only its script.
+# Local conversation context and rendered media. The submission video remains
+# local and is published separately as a release asset.
 history.txt
-video/*.mp4
-video/rosetta.srt
-video/script.md
-video/script-tts.md
+video/

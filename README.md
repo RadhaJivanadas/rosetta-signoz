@@ -303,7 +303,6 @@ scripts/
   investigate.py          agent postmortem over MCP
 tests/           28 tests
 infra/           casting.yaml + casting.yaml.lock
-video/           demo video, script, captions
 ```
 
 ---
