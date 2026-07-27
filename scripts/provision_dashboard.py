@@ -246,7 +246,7 @@ def build(title: str) -> dict:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--base", default=DEFAULT_BASE)
-    parser.add_argument("--title", default="Rosetta — polyglot agent telemetry")
+    parser.add_argument("--title", default="Rosetta, polyglot agent telemetry")
     parser.add_argument("--replace", action="store_true", help="delete same-titled dashboards first")
     args = parser.parse_args(argv)
 

@@ -120,8 +120,7 @@ Normalisation also made less obvious failures queryable:
 - a tool was called with the same argument 24 times while its context grew;
 - duplicate usage fields exposed a possible double-counting failure.
 
-The dashboard alone would have made those failures visible. Alerts made them
-operational.
+A dashboard makes those failures visible. Alerts make them operational.
 
 ![SigNoz alerts firing on canonical findings](assets/alerts.png)
 
@@ -156,11 +155,12 @@ The most useful learning did not come from the happy path.
 First, I originally enriched a completed readable span. OpenTelemetry span
 attributes are immutable after completion, so counters showed the right totals
 while SigNoz received none of the new fields. A unit test would happily verify
-the calculation and miss the delivery failure. The fix was to wrap the
-exportable span data rather than mutate the ended span.
+the calculation and miss the delivery failure. The fix was to replace the
+attribute mapping on the span wholesale, and then to assert on what the
+*exporter* received rather than on the processor's own counters.
 
 Second, browser automation appeared flaky because selectors stopped finding
-rows. The selectors were fine; the dashboard's “Last 30 minutes” window had
+rows. The selectors were fine; the dashboard's "Last 30 minutes" window had
 aged past the seeded data while I iterated on the recording. Re-emitting fresh
 telemetry before every capture fixed the supposed UI problem.
 
@@ -195,7 +195,7 @@ Conventions are still moving, and a larger deployment surface would make an
 incorrect precedence rule harder to reverse.
 
 The core idea is deliberately smaller: translate once at the telemetry
-boundary. SigNoz can then do what it already does well—query traces, aggregate
+boundary. SigNoz can then do what it already does well: query traces, aggregate
 metrics, retain logs, render dashboards, fire alerts, and expose the same data
 to agents over MCP.
 
@@ -206,7 +206,8 @@ keeps the resulting telemetry portable.
 
 ### References
 
-- [OpenTelemetry GenAI semantic conventions](https://opentelemetry.io/docs/specs/semconv/gen-ai/)
+- [OpenTelemetry GenAI semantic conventions](https://github.com/open-telemetry/semantic-conventions-genai)
+  (moved out of core semconv at v1.42.0; still no tagged release)
 - [SigNoz Query Builder](https://signoz.io/docs/userguide/query-builder/)
 - [SigNoz dashboards](https://signoz.io/docs/userguide/manage-dashboards-and-panels/)
 - [SigNoz alerts](https://signoz.io/docs/alerts-management/overview/)

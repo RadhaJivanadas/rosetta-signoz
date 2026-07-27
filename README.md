@@ -1,6 +1,6 @@
-# Rosetta — one vocabulary for polyglot AI-agent telemetry
+# Rosetta: one vocabulary for polyglot AI-agent telemetry
 
-**Track 01 — AI & Agent Observability** · *Agents of SigNoz* hackathon
+**Track 01, AI & Agent Observability** · *Agents of SigNoz* hackathon
 
 [Read the build article](https://radhajivanadas.github.io/rosetta-signoz/) ·
 [Watch the 3-minute submission video](https://github.com/RadhaJivanadas/rosetta-signoz/releases/download/v1.0.0/rosetta-submission.mp4)
@@ -9,7 +9,7 @@
 > names. Ask *"what did my agents cost this hour"* and no single query can
 > answer it.
 >
-> Rosetta makes that one query work — and finds the spend, the leaked
+> Rosetta makes that one query work, and it finds the spend, the leaked
 > credentials and the broken telemetry nobody was looking at.
 
 ---
@@ -33,11 +33,11 @@ So four libraries in wide production use report the same number four ways:
 | Pydantic AI / Logfire | `gen_ai.usage.input_tokens` | yes |
 | CrewAI / OpenInference | `llm.token_count.prompt` | yes, wrong name |
 | LangChain / OpenLLMetry | `gen_ai.usage.prompt_tokens` | yes, superseded name |
-| Langfuse SDK v4 | `langfuse.observation.usage_details` = `'{"input": 1200}'` | **no — it is a string** |
+| Langfuse SDK v4 | `langfuse.observation.usage_details` = `'{"input": 1200}'` | **no, it is a string** |
 
 A vendor backend hides this by normalising on ingest (Langfuse documents
 precedence across four conventions). **An OTLP-native backend like SigNoz
-stores exactly what it receives** — which is the correct, no-lock-in behaviour,
+stores exactly what it receives**, which is the correct, no-lock-in behaviour,
 and precisely why the fragmentation lands on the user.
 
 Rosetta fixes it in the pipeline instead of the backend, so the result stays
@@ -48,7 +48,7 @@ vendor-neutral.
 > that OpenInference, Strands, ADK and Microsoft Agent Framework emit none, the
 > spec defines none, and the four SDKs that do compute it disagree on where it
 > lives. SigNoz itself has `pkg/types/llmpricingruletypes` in-tree and an
-> `enable_ai_observability` flag, with the pricing processors still unmerged —
+> `enable_ai_observability` flag, with the pricing processors still unmerged, so
 > Rosetta complements that work from the SDK side rather than duplicating it.
 
 ---
@@ -57,21 +57,21 @@ vendor-neutral.
 
 A single OpenTelemetry `SpanProcessor`. Three passes, in a fixed order:
 
-1. **Redact** — secrets are destroyed *before* anything else reads or copies
+1. **Redact.** Secrets are destroyed *before* anything else reads or copies
    the content. Not at query time; by then the secret is already at rest.
-2. **Normalise** — seven dialects resolve into one canonical vocabulary,
+2. **Normalise.** Seven dialects resolve into one canonical vocabulary,
    first-match-wins over an explicit precedence list. **Additive**: source
    attributes are never deleted, so existing dashboards keep working.
-3. **Price** — USD computed from model × tokens, with cache-read/write and
+3. **Price.** USD computed from model × tokens, with cache-read/write and
    reasoning tokens billed at their own rates.
 
 Then the same finding is emitted in **three signal shapes**, each queried the
 way that signal is meant to be:
 
-- **span attribute** — for drill-down in a trace
-- **metric** — pre-aggregated, cheap to alert on at production cardinality
-- **log record** — governance findings outlive their trace, because a security
-  finding that expires with a sampled span is not a security control
+- **span attribute**, for drill-down in a trace
+- **metric**, pre-aggregated and cheap to alert on at production cardinality
+- **log record**, so governance findings outlive their trace. A security
+  finding that expires with a sampled span is not a security control.
 
 ---
 
@@ -81,7 +81,7 @@ way that signal is meant to be:
 # 1. SigNoz + MCP server, one config (casting.yaml is in this repo)
 cd infra && foundryctl cast -f casting.yaml
 
-# 2. Admin user, service account, admin role, API key — scripted, idempotent
+# 2. Admin user, service account, admin role, API key. Scripted and idempotent
 python scripts/bootstrap.py
 
 # 3. Emit the polyglot fleet (no LLM API keys needed, seeded, reproducible)
@@ -111,8 +111,7 @@ the exact deployment can be reproduced.
 ## The demo
 
 `demo/fleet.py` runs four services, each emitting a different dialect, with
-four pathologies planted. Everything is seeded — the numbers below reproduce
-exactly.
+four pathologies planted. Everything is seeded, so the numbers below reproduce exactly.
 
 ```
 $ python demo/fleet.py
@@ -144,10 +143,10 @@ reported a cost. One query now covers all of them.
 
 | Finding | Result |
 |---|---|
-| **Dark cost** — inference spans with no token usage | 12 spans, 3 per service |
-| **Leaked credentials** — AWS key, secret, JWT, DB URL, card, email | 6 secrets across 6 detectors, redacted pre-storage |
-| **Unpriced model** — real spend, no price entry | `acme-internal-reranker-v3` |
-| **Runaway loop** — one tool, one argument, 24 turns, context growing each turn | visible as tool-call concentration |
+| **Dark cost**: inference spans with no token usage | 12 spans, 3 per service |
+| **Leaked credentials**: AWS key, secret, JWT, DB URL, card, email | 6 secrets across 6 detectors, redacted pre-storage |
+| **Unpriced model**: real spend, no price entry | `acme-internal-reranker-v3` |
+| **Runaway loop**: one tool, one argument, 24 turns, context growing each turn | visible as tool-call concentration |
 | **Conformance score** | Pydantic AI **95** · OpenInference/OpenLLMetry **84** · Langfuse **76** |
 
 ---
@@ -156,22 +155,22 @@ reported a cost. One query now covers all of them.
 
 | Code | Severity | Meaning |
 |---|---|---|
-| `R001` | error | **Dark cost** — inference span reports no tokens in any dialect |
+| `R001` | error | **Dark cost**: inference span reports no tokens in any dialect |
 | `R002` | warning | Resolved from a superseded spec name |
 | `R003` | warning | Resolved from a vendor-proprietary namespace |
 | `R004` | error | Numeric value trapped inside a JSON string |
 | `R005` | info | Dual emission (`gen_ai.system` *and* `gen_ai.provider.name`) |
 | `R006` | warning | No `gen_ai.operation.name`, not inferable |
 | `R007` | info | Operation name not in the spec's value set |
-| `R008` | warning | No model — cannot price, cannot group |
+| `R008` | warning | No model: cannot price, cannot group |
 | `R009` | info | Aggregate roll-up usage; exclude from `SUM` |
-| `R010` | warning | `service.name` missing — spend is unattributable |
+| `R010` | warning | `service.name` missing: spend is unattributable |
 | `R012` | warning | Model absent from the pricing table |
 | `R013` | info | Self-hosted; priced zero by policy, not ignorance |
-| `R014` | error/warning | Same quantity reported twice — **double-counting risk** |
+| `R014` | error/warning | Same quantity reported twice: **double-counting risk** |
 
 `R014` is not theoretical: AWS Strands emits `prompt_tokens` **and**
-`input_tokens` on the same span. Resolution picks one, correctly — but staying
+`input_tokens` on the same span. Resolution picks one, correctly. But staying
 silent about the duplicate would leave anyone hand-writing a query
 double-counting with no way to know.
 
@@ -182,21 +181,21 @@ double-counting with no way to know.
 Observation is not ownership. An agent you can only *watch* burn money is still
 not one you own, so `rosetta/guard.py` closes the loop: a per-run circuit
 breaker on **budget**, on **tool loops** (same tool, same arguments, N times),
-and on **context runaway** (input tokens growing every turn — the signature of a
-run appending its own failures to the prompt).
+and on **context runaway** (input tokens growing every turn, which is how a run
+looks when it keeps appending its own failures to the prompt).
 
 ```
 circuit breaker  budget=$0.35/run, max 8 identical tool calls
   checkout-agent: stopped the loop after 7/24 turns, avoiding ~$0.2886
-  [R022] prompt grew on 6 consecutive calls — cost compounds every turn
+  [R022] prompt grew on 6 consecutive calls, cost compounds every turn
 ```
 
 The reason it lives in Rosetta rather than in a framework is the point of the
 whole project: **a budget rule needs to know what a run cost, and in a polyglot
 fleet that number does not exist until something normalises it.** Written
 against Pydantic AI's attribute names, the same breaker would have guarded one
-service out of four. `tests/test_guard.py` proves it — one run whose spans
-arrive in three different vocabularies still accumulates a single budget.
+service out of four. `tests/test_guard.py` proves it: one run whose spans arrive in three
+different vocabularies still accumulates a single budget.
 
 Enforcement is cooperative by construction: nothing outside an agent's own loop
 can abort a model call already in flight, so the agent asks (`guard.check()`)
@@ -211,8 +210,8 @@ Codes: `R020` budget · `R021` tool loop · `R022` context runaway.
 ## Three decisions that make the numbers trustworthy
 
 **Never invent a price.** An unknown model yields `None`, not `0`. Pricing an
-unknown model at zero turns real spend invisible — the exact failure this
-project exists to expose.
+unknown model at zero turns real spend invisible. That is the exact failure
+this project exists to expose.
 
 **Never double-count.** Pydantic AI's `gen_ai.aggregated_usage.*` is a roll-up
 of its children. Reading both it and the child usage doubles every token and
@@ -230,7 +229,7 @@ price" panel list `gpt-4o`, which prices fine.
 | Signal | How it is used |
 |---|---|
 | **Traces** | Canonical `gen_ai.*` + `rosetta.*` attributes on every span |
-| **Metrics** | `rosetta.spend.usd`, `gen_ai.client.tokens` histogram, `rosetta.findings`, `rosetta.dark_cost.spans` — custom buckets, delta temporality |
+| **Metrics** | `rosetta.spend.usd`, `gen_ai.client.tokens` histogram, `rosetta.findings`, `rosetta.dark_cost.spans`; custom buckets, delta temporality |
 | **Logs** | Governance findings as structured records, searchable by `body REGEXP` |
 | **Dashboards** | 8 panels created through the API, as code (see the version note below) |
 | **Alerts** | 5 threshold rules + notification channel via `/api/v2/rules` |
@@ -253,18 +252,18 @@ assumptions, and both are the kind that pass every unit test.
 **Enrichment never reached the backend.** A finished span's `attributes` is a
 `BoundedAttributes` built with `immutable=True`. Per-key assignment raises, my
 `except` swallowed it at debug level, the processor's counters reported correct
-totals — and *nothing* arrived in SigNoz. Only `test_enrichment_reaches_the_exporter`,
+totals, and *nothing* arrived in SigNoz. Only `test_enrichment_reaches_the_exporter`,
 which asserts on what the **exporter** received, catches this.
 
 **The checker reported "all clear" while broken.** The MCP investigator's
 interpreter decided "no findings" from the absence of digits. When a tool call
 failed validation, the error text contained digits, so it cheerfully reported
-*"No redacted credentials"* — for a query that never ran. It now distinguishes
+*"No redacted credentials"* for a query that never ran. It now distinguishes
 "nothing found" from "nothing asked", and says `unknown` rather than `ok`.
 
 **A 201 is not proof anyone can see the result.** `POST /api/v2/dashboards`
 accepts a Perses `schemaVersion: "v6"` document on v0.134.0, stores it
-faithfully — panels, layouts and queries all survive a round trip — and the
+faithfully. Panels, layouts and queries all survive a round trip. The
 bundled frontend then renders *"Welcome to your new dashboard"*, empty. The
 browser's own network log gives it away: the dashboard list calls
 `GET /api/v1/dashboards`, which returns the v2 document shape, and the
@@ -277,8 +276,8 @@ Every API call had returned success.
 
 Also worth knowing: **metric temporality metadata is sticky per metric name in
 SigNoz.** Cumulative counters from short-lived processes produce one point per
-series, so `rate`/`increase` return empty. Delta temporality fixes it — but
-only under a metric name that has not already been ingested as cumulative.
+series, so `rate`/`increase` return empty. Delta temporality fixes it, but only
+under a metric name that has not already been ingested as cumulative.
 
 ---
 
@@ -289,7 +288,7 @@ rosetta/
   semconv.py     seven dialects, canonical vocabulary, precedence
   normalize.py   resolution engine, conformance scoring, findings
   pricing.py     USD computation; refuses to guess
-  pricing.yaml   rates (INDICATIVE — see the header before trusting a number)
+  pricing.yaml   rates (INDICATIVE: read the header before trusting a number)
   redact.py      secret/PII detection; Luhn-validated cards
   guard.py       budget / loop / runaway circuit breaker
   emit.py        metrics + governance logs
@@ -314,7 +313,7 @@ infra/           casting.yaml + casting.yaml.lock
   `ROSETTA_PRICING_FILE` at your negotiated rates. Use the output to *detect
   anomalies*, not to invoice.
 - **Dialects are hand-maintained.** Seven are covered. A new framework needs a
-  new `Dialect` entry — small, but it is not automatic.
+  new `Dialect` entry. Small, but not automatic.
 - **Redaction is conservative by design.** Only structurally unambiguous or
   validated patterns. It will miss a secret with no distinctive shape; a false
   positive silently destroys debugging content, so precision was preferred.

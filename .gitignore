@@ -4,7 +4,7 @@ __pycache__/
 *.py[cod]
 .pytest_cache/
 
-# Scratch space and research checkouts — not part of the submission
+# Scratch space and research checkouts, not part of the submission
 .scratch/
 .tmp_sz/
 
@@ -18,7 +18,7 @@ infra/foundry*.tar.gz
 infra/api_key.txt
 .env
 
-# Contains an API key — must never reach a public repo
+# Contains an API key, must never reach a public repo
 prompt.txt
 
 # Local conversation context and rendered media. The submission video remains
